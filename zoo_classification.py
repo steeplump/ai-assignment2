@@ -19,16 +19,10 @@ print(zoo.isnull().any())
 print(zoo.info())
 desc = zoo.describe()
 
-# split dataset into two dataframes
-# X contains inputs
-# y contains target
-X = zoo.drop(['class_type','animal_name'], axis=1).values
-y = zoo['class_type'].values
-
-# split data into training set and testing set
-# 80% training set and 20% testing set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
+# add 'hasLegs'
+zoo['has_legs'] = np.where(zoo['legs']>0,1,0)
+zoo = zoo[['animal_name','hair','feathers','eggs','milk', 'airborne', 'aquatic', 'predator', 'toothed', 'backbone', 'breathes','venomous','fins','legs','has_legs','tail','domestic','catsize','class_type']]
+# print(zoo.head())
 
 # # KNN classifier model for k=3
 # knn3 = KNeighborsClassifier(n_neighbors=3)
@@ -53,6 +47,17 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 # ax.legend(loc = 'best')
 # plt.show()
 
+#-----test with number of legs------
+
+# split dataset into two dataframes
+# X contains inputs
+# y contains target
+X = zoo.drop(['class_type','animal_name','has_legs'], axis=1).values
+y = zoo['class_type'].values
+
+# split data into training set and testing set
+# 80% training set and 20% testing set
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # find optimal value of k
 # get scores for k values from 1 to 50
@@ -93,3 +98,65 @@ plt.ylabel('Error rate')
 plt.xticks(k_list)
 plt.rcParams['figure.figsize']=(12,12)
 plt.show()
+
+#-----end test with number of legs------
+
+#-----test with presence of legs-----
+
+X2 = zoo.drop(['class_type','animal_name','legs'], axis=1).values
+y2 = zoo['class_type']
+
+# split dataset into two dataframes
+# X2 contains inputs
+# y2 contains target
+X2_train, X2_test, y2_train, y2_test = train_test_split(X2,y2,random_state = 42)
+
+# find optimal value of n
+# get score fore different values of n
+k_list = np.arange(1,50,2)
+mean_scores2 = []
+accuracy_list2 = []
+error_rate2 = []
+
+for i in k_list:
+    knn2 = KNeighborsClassifier(n_neighbors=i)
+    knn2.fit(X2_train,y2_train)
+    pred_i = knn2.predict(X2_test)
+    score = cross_val_score(knn2,X2_train, y2_train,cv=10)
+    mean_scores2.append(np.mean(score))
+    error_rate2.append(np.mean(pred_i != y2_test))
+
+print("Mean Scores:")
+print(mean_scores)
+print("Error Rate:")
+print(error_rate)
+
+# plot n values and average accuracy scores
+# compare results with test with number of legs vs presence of legs
+plt.figure()
+plt.plot(k_list,mean_scores, color='b',marker='o', label='Model using Number of Legs')
+plt.plot(k_list,mean_scores2, color='m',marker='x', label='Model using Presence of Legs')
+
+plt.title('Accuracy of Model for Varying Values of K')
+plt.xlabel("Values of K")
+plt.ylabel("Mean Accuracy Score")
+plt.xticks(k_list)
+plt.legend()
+plt.rcParams['figure.figsize'] = (12,12) 
+plt.show()
+
+# plot n values and average accuracy scores
+# compare results with test with number of legs vs presence of legs
+plt.figure()
+plt.plot(k_list,error_rate, color='r', marker = 'o', label='Model using Number of Legs')
+plt.plot(k_list,error_rate2, color='c', marker = 'x', label='Model using Presence of Legs')
+
+plt.title('Error Rate for Model for Varying Values of K')
+plt.xlabel("Values of K")
+plt.ylabel("Error Rate")
+plt.xticks(k_list)
+plt.legend()
+plt.rcParams['figure.figsize'] = (12,12) 
+plt.show()
+
+#-----end test with presence of legs-----
