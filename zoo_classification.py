@@ -24,29 +24,6 @@ zoo['has_legs'] = np.where(zoo['legs']>0,1,0)
 zoo = zoo[['animal_name','hair','feathers','eggs','milk', 'airborne', 'aquatic', 'predator', 'toothed', 'backbone', 'breathes','venomous','fins','legs','has_legs','tail','domestic','catsize','class_type']]
 # print(zoo.head())
 
-# # KNN classifier model for k=3
-# knn3 = KNeighborsClassifier(n_neighbors=3)
-# knn3.fit(X_train, y_train)
-# print("KNN train score for k=3:")
-# print(knn3.score(X_train, y_train))
-# print("KNN test score for k=3:")
-# print(knn3.score(X_test, y_test))
-
-# # run prediction
-# y_pred = knn3.predict(X_test)
-# print("Confusion matrix:")
-# print(confusion_matrix(y_test, y_pred))
-# print(classification_report(y_test, y_pred))
-
-# # plot visualisation
-# plt.rcParams['figure.figsize'] = (9,9)
-# _, ax = plt.subplots()
-# ax.hist(y_test, color = 'b', alpha = 0.5, label = 'actual', bins=7)
-# ax.hist(y_pred, color = 'g', alpha = 0.5, label = 'prediction', bins=7)
-# ax.yaxis.set_ticks(np.arange(0,13))
-# ax.legend(loc = 'best')
-# plt.show()
-
 #-----test with number of legs------
 
 # split dataset into two dataframes
@@ -160,3 +137,28 @@ plt.rcParams['figure.figsize'] = (12,12)
 plt.show()
 
 #-----end test with presence of legs-----
+
+#-----KNN classifier-----
+
+# KNN classifier model for k=3
+knn3 = KNeighborsClassifier(n_neighbors=3)
+knn3.fit(X2_train, y2_train)
+print("KNN train score for k=3:")
+print(knn3.score(X2_train, y2_train))
+print("KNN test score for k=3:")
+print(knn3.score(X2_test, y2_test))
+
+# run prediction
+y_pred = knn3.predict(X2_test)
+print("Confusion matrix:")
+print(confusion_matrix(y2_test, y_pred))
+print(classification_report(y2_test, y_pred))
+
+# plot visualisation
+plt.rcParams['figure.figsize'] = (9,9)
+_, ax = plt.subplots()
+ax.hist(y2_test, color = 'b', alpha = 0.5, label = 'actual', bins=7)
+ax.hist(y_pred, color = 'g', alpha = 0.5, label = 'prediction', bins=7)
+ax.yaxis.set_ticks(np.arange(0,13))
+ax.legend(loc = 'best')
+plt.show()
