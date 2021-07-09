@@ -9,19 +9,29 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.metrics import confusion_matrix, classification_report, accuracy_score
 
-# import dataset 
-zoo = pd.read_csv("zoo.csv")
-print(zoo.head())
-print(zoo.shape)
+# import datasets
+zoo_df = pd.read_csv("zoo.csv")
+class_df = pd.read_csv("class.csv")
+
+# combine datasets
+zoo = zoo_df.merge(class_df, how='left', left_on='class_type', right_on='Class_Number')
+
+# remove unwanted/duplicate columns
+zoo = zoo.drop(['Class_Type', 'Animal_Names', 'Number_Of_Animal_Species_In_Class'], axis=1)
+
+# print(zoo.head())
+# print(zoo.shape)
+
 # check for null values
 print(zoo.isnull().any())
+
 # explore data
 print(zoo.info())
 desc = zoo.describe()
 
 # add 'hasLegs'
 zoo['has_legs'] = np.where(zoo['legs']>0,1,0)
-zoo = zoo[['animal_name','hair','feathers','eggs','milk', 'airborne', 'aquatic', 'predator', 'toothed', 'backbone', 'breathes','venomous','fins','legs','has_legs','tail','domestic','catsize','class_type']]
+zoo = zoo[['animal_name','hair','feathers','eggs','milk', 'airborne', 'aquatic', 'predator', 'toothed', 'backbone', 'breathes','venomous','fins','legs','has_legs','tail','domestic','catsize','class_type','Class_Number']]
 # print(zoo.head())
 
 #-----test with number of legs------
@@ -29,8 +39,8 @@ zoo = zoo[['animal_name','hair','feathers','eggs','milk', 'airborne', 'aquatic',
 # split dataset into two dataframes
 # X contains inputs
 # y contains target
-X = zoo.drop(['class_type','animal_name','has_legs'], axis=1).values
-y = zoo['class_type'].values
+X = zoo.drop(['class_type','animal_name','has_legs','Class_Number'], axis=1).values
+y = zoo['Class_Number'].values
 
 # split data into training set and testing set
 # 80% training set and 20% testing set
@@ -80,8 +90,8 @@ plt.show()
 
 #-----test with presence of legs-----
 
-X2 = zoo.drop(['class_type','animal_name','legs'], axis=1).values
-y2 = zoo['class_type']
+X2 = zoo.drop(['class_type','animal_name','legs','Class_Number'], axis=1).values
+y2 = zoo['Class_Number']
 
 # split dataset into two dataframes
 # X2 contains inputs
